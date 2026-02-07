@@ -1,0 +1,137 @@
+name: Audit Summary (Stage 1 + Stage 2)
+
+on:
+  workflow_call:
+    secrets:
+      OPENAI_API_KEY:
+        required: true
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  audit_summary_analysis_pack:
+    name: Audit Summary Stage 1 -> analysis pack JSON
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Prepare /mnt/data
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo mkdir -p /mnt/data
+          sudo chmod 777 /mnt/data
+
+      - name: Download security-audit-excel artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: security-audit-excel
+          path: /mnt/data
+
+      - name: Verify Excel input
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f "/mnt/data/security_audit_requirements.xlsx"
+          ls -lah "/mnt/data/security_audit_requirements.xlsx"
+
+      - name: Install dependencies (stage 1)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          pip install --no-cache-dir pandas openpyxl
+
+      - name: Build analysis pack JSON
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/audit_summary_stage1_build_analysis_pack.py
+          test -f "/mnt/data/audit_summary_analysis_pack.json"
+          ls -lah "/mnt/data/audit_summary_analysis_pack.json"
+
+      - name: Upload analysis pack artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-summary-analysis-pack
+          if-no-files-found: error
+          path: /mnt/data/audit_summary_analysis_pack.json
+
+  audit_summary_docx:
+    name: Audit Summary Stage 2 -> Audit Summary.docx
+    needs: [audit_summary_analysis_pack]
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Prepare /mnt/data
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo mkdir -p /mnt/data
+          sudo chmod 777 /mnt/data
+
+      - name: Download analysis pack artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: audit-summary-analysis-pack
+          path: /mnt/data
+
+      - name: (Optional) Download security-audit-excel artifact (for trace reference)
+        uses: actions/download-artifact@v4
+        with:
+          name: security-audit-excel
+          path: /mnt/data
+
+      - name: Install dependencies (stage 2)
+        shell: bash
+        env:
+          MPLCONFIGDIR: /tmp/matplotlib
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          pip install --no-cache-dir pandas openpyxl python-docx matplotlib "openai>=1.55.0"
+          mkdir -p /tmp/matplotlib
+
+      - name: Generate Audit Summary DOCX
+        shell: bash
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: "gpt-5.2"
+          OPENAI_REASONING_EFFORT: "medium"
+          OPENAI_MAX_OUTPUT_TOKENS: "6000"
+          MPLCONFIGDIR: /tmp/matplotlib
+        run: |
+          set -euo pipefail
+          python scripts/audit_summary_stage2_generate_docx.py
+          test -f "/mnt/data/Audit Summary.docx"
+          ls -lah "/mnt/data/Audit Summary.docx"
+
+      - name: Upload Audit Summary DOCX artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-summary-docx
+          if-no-files-found: error
+          path: "/mnt/data/Audit Summary.docx"
