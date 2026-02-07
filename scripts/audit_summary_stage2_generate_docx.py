@@ -321,7 +321,7 @@ def _call_llm_for_style(patterns: List[Dict[str, Any]], likelihood_rubric: Dict[
     Uses LLM only to improve prose and provide richer recommendation bullet sets.
     Does NOT generate any numeric metrics. Counts and rubrics are provided as constraints.
     """
-    api_key = os.getenv("OPENAI_API_KEY", "").strip()
+    api_key = os.getenv("OPENAI_API_KEY1", "").strip()
     if not api_key:
         return {}
 
@@ -443,7 +443,7 @@ def main() -> None:
     _stacked_counts(cat_stats, fig4)
 
     prose: Dict[str, Any] = {}
-    if USE_LLM and os.getenv("OPENAI_API_KEY", "").strip():
+    if USE_LLM and os.getenv("OPENAI_API_KEY1", "").strip():
         try:
             prose = _call_llm_for_style(patterns, likelihood_rubric, max_takeaways=7)
         except Exception:

@@ -520,7 +520,7 @@ def audit_requirement(
 
 
 def openai_client() -> Optional[Any]:
-    api_key = os.getenv("OPENAI_API_KEY", "").strip()
+    api_key = os.getenv("OPENAI_API_KEY1", "").strip()
     if not api_key or OpenAI is None:
         return None
     return OpenAI(api_key=api_key)
@@ -891,7 +891,7 @@ def main() -> None:
             if strict_english:
                 raise SystemExit(
                     "STRICT_ENGLISH_OUTPUT is enabled, but non-English requirement descriptions were detected and "
-                    "OPENAI_API_KEY is not set. Provide an English requisites.json OR set OPENAI_API_KEY to enable translation."
+                    "OPENAI_API_KEY1 is not set. Provide an English requisites.json OR set OPENAI_API_KEY to enable translation."
                 )
             print("[WARN] Non-English descriptions detected; translation skipped because OpenAI is unavailable.", file=sys.stderr)
         else:

@@ -482,10 +482,10 @@ Return STRICT JSON only.
 
 # ---- OpenAI / Heurística -----------------------------------------------------
 def llm_decide(puid: str, req: Dict[str, Any], app_ctx: str, code: CodeHints, ev: Evidence, timeout_s: int) -> Tuple[str, str, Dict[str, Any]]:
-    if not OPENAI_AVAILABLE or not os.getenv("OPENAI_API_KEY"):
+    if not OPENAI_AVAILABLE or not os.getenv("OPENAI_API_KEY1"):
         return ("N/A", "OpenAI not available", {})
 
-    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY1"))
     model = os.getenv("OPENAI_MODEL", "gpt-5")
     max_out = int(os.getenv("OPENAI_MAX_OUTPUT_TOKENS", "900"))
     reasoning_effort = os.getenv("OPENAI_REASONING_EFFORT", "medium")
@@ -787,7 +787,7 @@ def main() -> int:
         use_llm = args.use_llm
         need_llm = (use_llm == "always") or (use_llm == "uncertain" and (decision in ("MANUAL", "N/A")))
 
-        if need_llm and OPENAI_AVAILABLE and os.getenv("OPENAI_API_KEY"):
+        if need_llm and OPENAI_AVAILABLE and os.getenv("OPENAI_API_KEY1"):
             llm_dec, llm_ev, llm_ex = llm_decide(puid, r, app_ctx, code, ev, timeout_s=args.llm_timeout)
             # Políticas de fusión conservadoras:
             if llm_dec == "NO":

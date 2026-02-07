@@ -3,7 +3,7 @@ name: AI Requirements Audit (Excel)
 on:
   workflow_call:
     secrets:
-      OPENAI_API_KEY:
+      OPENAI_API_KEY1:
         required: true
 
 permissions:
@@ -106,7 +106,7 @@ jobs:
           STRICT_ENGLISH_OUTPUT: "1"
           TRANSLATE_REQUIREMENT_DESCRIPTIONS: "1"
 
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_API_KEY1: ${{ secrets.OPENAI_API_KEY1 }}
           OPENAI_MODEL: "gpt-5.2"
           OPENAI_REASONING_EFFORT: "medium"
           OPENAI_MAX_OUTPUT_TOKENS: "2400"

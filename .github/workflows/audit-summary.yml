@@ -3,7 +3,7 @@ name: Audit Summary (Stage 1 + Stage 2)
 on:
   workflow_call:
     secrets:
-      OPENAI_API_KEY:
+      OPENAI_API_KEY1:
         required: true
 
 permissions:
@@ -118,7 +118,7 @@ jobs:
       - name: Generate Audit Summary DOCX
         shell: bash
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_API_KEY1: ${{ secrets.OPENAI_API_KEY1 }}
           OPENAI_MODEL: "gpt-5.2"
           OPENAI_REASONING_EFFORT: "medium"
           OPENAI_MAX_OUTPUT_TOKENS: "6000"
