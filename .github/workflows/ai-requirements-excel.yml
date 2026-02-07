@@ -119,7 +119,7 @@ jobs:
           ls -lah /mnt/data/security_audit_requirements.xlsx
 
       - name: Upload Excel output
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: security-audit-excel
           if-no-files-found: error

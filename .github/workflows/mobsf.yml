@@ -74,7 +74,7 @@ jobs:
           $report | ConvertTo-Json -Depth 100 | Set-Content mobsf_results.json
 
       - name: Upload MobSF static results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: mobsf-report
           path: mobsf_results.json
@@ -120,7 +120,7 @@ jobs:
           }
 
       - name: Upload MobSF dynamic results (if present)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: mobsf-dynamic-report
           path: mobsf_dynamic_results.json

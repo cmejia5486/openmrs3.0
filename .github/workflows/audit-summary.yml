@@ -63,7 +63,7 @@ jobs:
           ls -lah "/mnt/data/audit_summary_analysis_pack.json"
 
       - name: Upload analysis pack artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: audit-summary-analysis-pack
           if-no-files-found: error
@@ -130,7 +130,7 @@ jobs:
           ls -lah "/mnt/data/Audit Summary.docx"
 
       - name: Upload Audit Summary DOCX artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: audit-summary-docx
           if-no-files-found: error
