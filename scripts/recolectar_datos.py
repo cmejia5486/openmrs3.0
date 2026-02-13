@@ -16,6 +16,7 @@ compliant (`True`).  Optionally, this script will parse Trivy results from
 `dependency_results.json` to populate the vulnerability lists.
 """
 
+
 import json
 import os
 from typing import Dict, List, Any
